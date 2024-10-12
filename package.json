@@ -1,0 +1,14 @@
+{
+  "main": "index.js",
+  "name": "vinicius.crisol_blog",
+  "engines": {
+    "node": "20.18.0"
+  },
+  "scripts": {
+    "compile": "node ./scripts/compile.js"
+  },
+  "dependencies": {
+    "html-minifier": "^4.0.0",
+    "showdown": "^2.1.0"
+  }
+}

@@ -5,7 +5,7 @@
     "node": "20.18.0"
   },
   "scripts": {
-    "compile": "node ./scripts/compile.js"
+    "build": "node ./scripts/build.js"
   },
   "dependencies": {
     "html-minifier": "^4.0.0",

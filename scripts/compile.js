@@ -70,7 +70,13 @@ function convertMarkdownToHTML(markdownContent) {
 function renderPost(post) {
     fs.writeFileSync(
         path.join(DIST_PATH, post.meta.id),
-        enrichTemplate(postTemplate, { $body: post.html, $title: post.meta.title })
+        enrichTemplate(postTemplate, {
+            $post: post.html,
+            $title: post.meta.title,
+            $updated_at: post.meta.updated_at,
+            $published_at: post.meta.published_at,
+            $published_by: post.meta.published_by
+        })
     );
 }
 
@@ -84,7 +90,7 @@ function generatePostComponents(posts) {
             enrichTemplate(postComponent, {
                 $id: post.meta.id,
                 $title: post.meta.title,
-                $created_at: post.meta.created_at,
+                $updated_at: post.meta.updated_at,
                 $short_description: post.meta.short_description
             })
         )
@@ -112,7 +118,6 @@ function optimizeHTML(html) {
         removeAttributeQuotes: true,
         removeEmptyAttributes: true,
         keepClosingSlash: true,
-        collapseWhitespace: true,
-        collapseInlineTagWhitespace: true
+        collapseWhitespace: true
     });
 }

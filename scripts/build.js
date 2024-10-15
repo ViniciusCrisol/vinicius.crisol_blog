@@ -69,7 +69,7 @@ function convertMarkdownToHTML(markdownContent) {
 
 function renderPost(post) {
     fs.writeFileSync(
-        path.join(DIST_PATH, post.meta.id),
+        path.join(DIST_PATH, post.meta.page),
         enrichTemplate(postTemplate, {
             $post: post.html,
             $title: post.meta.title,
@@ -88,7 +88,7 @@ function generatePostComponents(posts) {
     return posts
         .map((post) =>
             enrichTemplate(postComponent, {
-                $id: post.meta.id,
+                $page: post.meta.page,
                 $title: post.meta.title,
                 $updated_at: post.meta.updated_at,
                 $short_description: post.meta.short_description

@@ -17,7 +17,6 @@
         *,
         html,
         body,
-        header,
         a,
         p,
         ul,
@@ -30,6 +29,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            vertical-align: baseline;
             color: #232e52;
             font-size: 18px;
             line-height: 1.6;
@@ -61,10 +61,10 @@
             width: 100%;
             max-width: 800px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 20px 40px 20px;
         }
 
-        nav {
+        body > nav {
             height: 60px;
             margin: 20px 0;
             border-bottom: 2px solid #ebf2fe;
@@ -73,27 +73,27 @@
             justify-content: space-between;
         }
 
-        nav > a > h1 {
+        body > nav > a > h1 {
             font-size: 1rem;
         }
 
-        .posts {
+        body > ul {
             gap: 20px;
             display: flex;
             flex-direction: column;
         }
 
-        .posts > li {
+        body > ul > li {
             width: 100%;
             border: 2px solid #ebf2fe;
             transition: 125ms ease-in-out;
         }
 
-        .posts > li:hover {
+        body > ul > li:hover {
             background: #ebf2fe;
         }
 
-        .posts > li > a {
+        body > ul > li > a {
             width: 100%;
             height: 100%;
             padding: 12px;
@@ -102,7 +102,7 @@
             flex-direction: column;
         }
 
-        .posts > li > a > span {
+        body > ul > li > a > span {
             font-size: 0.85rem;
         }
     </style>
@@ -112,7 +112,7 @@
                 <h1>CRISOL.DEV</h1>
             </a>
         </nav>
-        <ul class="posts">
+        <ul>
             $posts
         </ul>
     </body>

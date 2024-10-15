@@ -7,7 +7,8 @@ const converter = new showdown.Converter({ metadata: true });
 
 const DIST_PATH = process.env.DIST_PATH || path.join(__dirname, "..", "dist");
 const POSTS_PATH = process.env.POSTS_PATH || path.join(__dirname, "..", "posts");
-const TEMPLATES_PATH = process.env.TEMPLATES_PATH || path.join(__dirname, "templates");
+const TEMPLATES_PATH = process.env.TEMPLATES_PATH || path.join(__dirname, "..", "templates");
+
 const HOME_PATH = path.join(DIST_PATH, "index.html");
 
 const homeTemplate = fs.readFileSync(path.join(TEMPLATES_PATH, "home.template.html"), "utf-8");
@@ -19,12 +20,19 @@ function main() {
         rmDist();
         mkDist();
 
-        const posts = getPosts().filter(isPostPublished);
-        posts.forEach(renderPost);
+        const posts = [];
+        getPostFileNames().forEach((fileName) => {
+            const mdContent = getPostFileMDContent(fileName);
+            const htmlContent = convertMarkdownToHTML(mdContent);
+            if (htmlContent.meta.published_at) {
+                renderPost(htmlContent);
+                posts.push(htmlContent);
+            }
+        });
         renderHome(posts);
-    } catch (error) {
+    } catch (err) {
         rmDist();
-        throw error;
+        throw err;
     }
 }
 main();
@@ -37,23 +45,15 @@ function rmDist() {
     fs.rmSync(DIST_PATH, { recursive: true, force: true });
 }
 
-function getPosts() {
-    return getPostFileNames().map(readPostFile).map(convertMarkdownToHTML);
-}
-
 function getPostFileNames() {
     try {
-        return fs.readdirSync(POSTS_PATH).filter(isMarkdownFile);
+        return fs.readdirSync(POSTS_PATH);
     } catch {
         throw new Error(`Directory "${POSTS_PATH}" not found`);
     }
 }
 
-function isMarkdownFile(fileName) {
-    return fileName.endsWith(".md");
-}
-
-function readPostFile(fileName) {
+function getPostFileMDContent(fileName) {
     const filePath = path.join(POSTS_PATH, fileName);
     try {
         return fs.readFileSync(filePath, "utf-8");
@@ -62,14 +62,15 @@ function readPostFile(fileName) {
     }
 }
 
-function convertMarkdownToHTML(markdownContent) {
-    const html = converter.makeHtml(markdownContent);
+function convertMarkdownToHTML(markdown) {
+    const html = converter.makeHtml(markdown);
     return { html, meta: converter.getMetadata() };
 }
 
 function renderPost(post) {
+    const postPath = path.join(DIST_PATH, post.meta.page);
     fs.writeFileSync(
-        path.join(DIST_PATH, post.meta.page),
+        postPath,
         enrichTemplate(postTemplate, {
             $post: post.html,
             $title: post.meta.title,
@@ -81,7 +82,12 @@ function renderPost(post) {
 }
 
 function renderHome(posts) {
-    fs.writeFileSync(HOME_PATH, enrichTemplate(homeTemplate, { $posts: generatePostComponents(posts) }));
+    fs.writeFileSync(
+        HOME_PATH,
+        enrichTemplate(homeTemplate, {
+            $posts: generatePostComponents(posts)
+        })
+    );
 }
 
 function generatePostComponents(posts) {
@@ -97,16 +103,12 @@ function generatePostComponents(posts) {
         .join("");
 }
 
-function isPostPublished(post) {
-    return Boolean(post.meta.published_at);
-}
-
 function enrichTemplate(template, data) {
-    let enrichedTemplate = template;
+    let enriched = template;
     for (const field in data) {
-        enrichedTemplate = enrichedTemplate.replaceAll(field, data[field]);
+        enriched = enriched.replaceAll(field, data[field]);
     }
-    return optimizeHTML(enrichedTemplate);
+    return optimizeHTML(enriched);
 }
 
 function optimizeHTML(html) {

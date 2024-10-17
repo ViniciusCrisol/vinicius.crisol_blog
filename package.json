@@ -1,6 +1,9 @@
 {
-  "main": "index.js",
   "name": "vinicius.crisol_blog",
+  "author": {
+    "name": "Vinícius Crisol",
+    "email": "vinicius.crisol@hotmail.com"
+  },
   "engines": {
     "node": "20.18.0"
   },
